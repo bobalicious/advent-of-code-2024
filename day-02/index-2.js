@@ -18,21 +18,22 @@ const baseReportIsSafe = report => {
 	return true;
 }
 
-const levelRemovedVariants = report => {
-	const levelRemovedVariants = [];
+const dampenedVariants = report => {
+	const dampenedVariants = [];
+
 	for ( let indexToRemove=0; indexToRemove<report.length; indexToRemove++ ) {
-		levelRemovedVariants.push( report.filter( ( value, index ) => index !== indexToRemove ) );
+		dampenedVariants.push( report.toSpliced( indexToRemove, 1 ) );
 	}
-	return levelRemovedVariants;
+	return dampenedVariants;
 }
 
-const aLevelRemovedVariantIsSafe = report => {
-	return levelRemovedVariants( report )
+const aDampenedVariantIsSafe = report => {
+	return dampenedVariants( report )
 				.some( baseReportIsSafe );
 }
 
 const reportIsSafe = report => {
-	return baseReportIsSafe( report ) || aLevelRemovedVariantIsSafe( report );
+	return baseReportIsSafe( report ) || aDampenedVariantIsSafe( report );
 }
 
 let safeCount = input.split('\n')

@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const input = fs.readFileSync(__dirname + '/input.txt', 'utf8');
+const input = fs.readFileSync( __dirname + '/input.txt', 'utf8' );
 
 const array1 = [];
 const array2 = [];
@@ -15,7 +15,7 @@ array1.sort( (a, b) => a - b );
 array2.sort( (a, b) => a - b );
 
 let difference = 0;
-array1.forEach( (value, index ) => {
+array1.forEach( ( value, index ) => {
 	difference += Math.abs( value - array2[index] );
 });
 

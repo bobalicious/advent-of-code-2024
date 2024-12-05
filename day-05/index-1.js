@@ -28,7 +28,7 @@ rawRules.forEach( thisRule => {
 });
 
 const findRequiredPrecedingPages = pageBeingPrinted => {
-	return requiredPreceedingPages[ pageBeingPrinted ];
+	return requiredPreceedingPages[ pageBeingPrinted ] || [];
 }
 
 const passesRules = thisUpdate => {
@@ -39,12 +39,10 @@ const passesRules = thisUpdate => {
 		const preceedingPages = thisUpdate.slice( 0, i );
 		const requiredPreceedingPages = findRequiredPrecedingPages( thisPage );
 
-		if ( requiredPreceedingPages ) {
-			for ( let j = 0; j < requiredPreceedingPages.length; j++ ) {
-				const requiredPage = requiredPreceedingPages[j];
-				if ( thisUpdate.includes( requiredPage ) && ! preceedingPages.includes( requiredPage ) ) {
-					return false;
-				}
+		for ( let j = 0; j < requiredPreceedingPages.length; j++ ) {
+			const requiredPage = requiredPreceedingPages[j];
+			if ( thisUpdate.includes( requiredPage ) && ! preceedingPages.includes( requiredPage ) ) {
+				return false;
 			}
 		}
 	}
@@ -57,8 +55,6 @@ const findMiddlePage = thisUpdate => {
 
 const result = updates
 					.filter( passesRules )
-					.reduce( ( acc, thisUpdate ) => {
-						return acc + findMiddlePage( thisUpdate );
-					}, 0);
+					.reduce( ( acc, thisUpdate ) => acc + findMiddlePage( thisUpdate ), 0);
 
 console.log( result );

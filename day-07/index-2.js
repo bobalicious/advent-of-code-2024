@@ -1,3 +1,5 @@
+const startTime = new Date().getTime();
+
 const fs = require('fs');
 const input = fs.readFileSync( __dirname + '/input.txt', 'utf8' );
 
@@ -54,8 +56,14 @@ const calibrations = input
 							}
 						});
 
+const initialisedTime = new Date().getTime();
+
 const total = calibrations.reduce( ( total, thisCalibration ) => {
 	return total + ( testCalibration( thisCalibration ) ? thisCalibration.target : 0 );
 }, 0 );
 
+const endTime = new Date().getTime();
+
+console.log( 'Initialisation time:', initialisedTime - startTime, 'milliseconds' );
+console.log( 'Processing time:', endTime - initialisedTime, 'milliseconds' );
 console.log( total );

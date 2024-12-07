@@ -62,6 +62,6 @@ const total = calibrations.reduce( ( total, thisCalibration ) => {
 
 const endTime = new Date().getTime();
 
-console.log( 'Initialisation time:', initialisedTime - startTime, 'milliseconds' );	// 2ms
-console.log( 'Processing time:', endTime - initialisedTime, 'milliseconds' );		// 80ms for original - 4ms for new
+console.log( 'Initialisation time:', initialisedTime - startTime, 'milliseconds' );
+console.log( 'Processing time:', endTime - initialisedTime, 'milliseconds' );
 console.log( total );

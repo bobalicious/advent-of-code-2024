@@ -45,8 +45,6 @@ const countAntinodes = () => antinodes.reduce( ( total, thisRow ) => thisRow.red
 
 const findCommonFactor = ( a, b ) => {
 
-	if ( a === 1 || b === 1 ) return 1;
-
 	if ( a > b ) {
 		[a, b] = [b, a];
 	}

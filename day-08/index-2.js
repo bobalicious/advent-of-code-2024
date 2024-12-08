@@ -1,7 +1,14 @@
 const startTime = new Date().getTime();
 
+const files = {
+	test: 'test-input.txt',
+	full: 'input.txt'
+}
+
+const file = files[ process.argv[2] ] || files.full;
+
 const fs = require('fs');
-const input = fs.readFileSync( __dirname + '/input.txt', 'utf8' );
+const input = fs.readFileSync( __dirname + '/' + file, 'utf8' );
 
 const antennas = new Map();
 const antinodes = [];

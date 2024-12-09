@@ -43,13 +43,6 @@ const moveFileIntoFreeSpace = freeSpacePointer => {
 	}
 }
 
-const outputRegister = () => {
-	let output = '';
-	register.forEach( register => {
-		output += register.isFree ? '.' : register.id;
-	})
-}
-
 const checkSum = () => {
 	return register.reduce( ( total, register, index ) => {
 		return register.isFree ? total : total + ( register.id * index );
@@ -65,12 +58,8 @@ const squashSpace = () => {
 			continue;
 		}
 		moveFileIntoFreeSpace( pointer );
-		outputRegister();
 	}
 }
-
-
-outputRegister();
 
 const initialisedTime = new Date().getTime();
 

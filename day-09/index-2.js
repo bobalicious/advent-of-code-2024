@@ -67,14 +67,6 @@ const moveFileIntoFreeSpace = fileDescription => {
 	register.splice( fileDescription.pointer, freeSpace.length, ...freeSpace );
 }
 
-const outputRegister = () => {
-	let output = '';
-	register.forEach( register => {
-		output += register.isFree ? '.' : register.id;
-	})
-	//	console.log( output );
-}
-
 const checkSum = () => {
 	return register.reduce( ( total, register, index ) => {
 		return register.isFree ? total : total + ( register.id * index );
@@ -91,13 +83,9 @@ const squashSpace = () => {
 			continue;
 		}
 		moveFileIntoFreeSpace( { pointer: ( pointer - entitySize )+1, size: entitySize } );
-		outputRegister();
 		pointer -= entitySize;
 	}
 }
-
-
-outputRegister();
 
 const initialisedTime = new Date().getTime();
 

@@ -1,8 +1,10 @@
+const startTime = new Date().getTime();
+
+
 const fs = require('fs');
 const input = fs.readFileSync( __dirname + '/input.txt', 'utf8' );
 
 const lines = input.split( '\n' );
-const lineLength = lines.length;
 
 const directions = [
 	{ x: 1, y: -1 },
@@ -15,31 +17,25 @@ const directions = [
 	{ x: -1, y: 1 }
 ];
 
-const getCharAt = ( x, y ) => {
-	return lines[y][x];
-}
-
 const checkForWord = ( x, y, direction, word ) => {
 
 	if ( word.length === 0 ) {
 		return true;
 	}
 
-	if ( x<0 || x>=lineLength || y<0 || y>=lines.length ) {
-		return false;
-	}
-
-	if ( getCharAt( x, y ) !== word[0] ) {
+	if ( lines[y]?.[x] !== word[0] ) {
 		return false;
 	}
 
 	return checkForWord( x + direction.x, y + direction.y, direction, word.substring(1) );
 }
 
+const searchString = 'XMAS';
 let count = 0;
-lines.forEach( ( thisLine, lineNumber ) => {
 
-	const searchString = 'XMAS';
+const initialisedTime = new Date().getTime();
+
+lines.forEach( ( thisLine, lineNumber ) => {
 
 	Array.from( thisLine ).forEach( ( thisChar, charNumber ) => {
 		directions.forEach( thisDirection => {
@@ -50,4 +46,8 @@ lines.forEach( ( thisLine, lineNumber ) => {
 	})
 });
 
+const endTime = new Date().getTime();
+
+console.log( 'Initialisation time:', initialisedTime - startTime, 'milliseconds' );
+console.log( 'Processing time:', endTime - initialisedTime, 'milliseconds' );
 console.log( count );

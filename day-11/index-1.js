@@ -56,8 +56,6 @@ for ( let i=0; i<blinks; i++ ) {
 	stones = processStones( stones );
 }
 
-console.log( stones );
-
 const endTime = new Date().getTime();
 
 console.log( 'Initialisation time:', initialisedTime - startTime, 'milliseconds' );

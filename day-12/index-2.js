@@ -59,43 +59,31 @@ const findRegion = point => {
 const countSides = region => {
 
 	let sides = 0;
-	const regionMapByX = [];
-	const regionMapByY = [];
+	const regionMap = [];
 
 	region.forEach( point => {
-
-		regionMapByX[ point.x ] = regionMapByX[ point.x ] || [];
-		regionMapByX[ point.x ][ point.y ] = point;
-
-		regionMapByY[ point.y ] = regionMapByY[ point.y ] || [];
-		regionMapByY[ point.y ][ point.x ] = point;
+		regionMap[ point.x ] = regionMap[ point.x ] || [];
+		regionMap[ point.x ][ point.y ] = point;
 	});
 
-	regionMapByX.forEach( ( col, x ) => {
+	regionMap.forEach( ( col, x ) => {
 		col.forEach( ( point, y ) => {
 			if ( point ) {
 				if ( point.perimeters.left && ! point.perimeterExamined?.left ) {
 					sides++;
-					markLookedAt( regionMapByX, point, 'left' );
+					markLookedAt( regionMap, point, 'left' );
 				}
 				if ( point.perimeters.right && ! point.perimeterExamined?.right ) {
 					sides++;
-					markLookedAt( regionMapByX, point, 'right' );
+					markLookedAt( regionMap, point, 'right' );
 				}
-			}
-		});
-	});
-
-	regionMapByY.forEach( ( row, y )  => {
-		row.forEach( ( point, x ) => {
-			if ( point ) {
 				if ( point.perimeters.top && ! point.perimeterExamined?.top ) {
 					sides++;
-					markLookedAt( regionMapByX, point, 'top' );
+					markLookedAt( regionMap, point, 'top' );
 				}
 				if ( point.perimeters.bottom && ! point.perimeterExamined?.bottom ) {
 					sides++;
-					markLookedAt( regionMapByX, point, 'bottom' );
+					markLookedAt( regionMap, point, 'bottom' );
 				}
 			}
 		});
@@ -116,7 +104,7 @@ const markLookedAt = ( regionMap, point, direction ) => {
 	point.perimeterExamined = point.perimeterExamined || {};
 	point.perimeterExamined[ direction ] = true;
 	const next = regionMap[ point.x + lookDirections[ direction ].x ]?.[ point.y + lookDirections[ direction ].y ];
-	if ( next && next.regionIdentifier === point.regionIdentifier && next.perimeters[ direction ] ) {
+	if ( next?.perimeters[ direction ] ) {
 		markLookedAt( regionMap, next, direction );
 	}
 }
@@ -175,11 +163,5 @@ const total = regionIndexes.reduce( ( total, region ) => {
 }, 0 );
 
 console.log( total );
-
-// const region = regionIndexes[8];
-// const sides = countSides( region );
-// //console.log( region );
-// console.log( Array.from( region )[0]?.regionIdentifier, region.size, '*', sides );
-
 
 console.timeEnd( 'processing' );

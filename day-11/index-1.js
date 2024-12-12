@@ -1,4 +1,4 @@
-const startTime = new Date().getTime();
+console.time( 'initialisation' );
 
 const files = {
 	test: 'test-input.txt',
@@ -49,15 +49,13 @@ let stones = input
 				.split( ' ' )
 				.map( stone => parseInt( stone ) );
 
-const initialisedTime = new Date().getTime();
+console.timeEnd( 'initialisation' );
+console.time( 'processing' );
 
 const blinks = 25;
 for ( let i=0; i<blinks; i++ ) {
 	stones = processStones( stones );
 }
 
-const endTime = new Date().getTime();
-
-console.log( 'Initialisation time:', initialisedTime - startTime, 'milliseconds' );
-console.log( 'Processing time:', endTime - initialisedTime, 'milliseconds' );
+console.timeEnd( 'processing' );
 console.log( stones.length );

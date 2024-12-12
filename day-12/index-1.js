@@ -68,7 +68,7 @@ input
 					x: x,
 					y: y,
 					regionIdentifier: regionIdentifier,
-					regionPerimeterTotal: 0,
+					perimeters: 0,
 					region: false,
 				}
 
@@ -83,13 +83,13 @@ console.time( 'processing' );
 regionMap.forEach( ( row ) => {
 	row.forEach( ( point ) => {
 		findRegion( point );
-		point.regionPerimeterTotal = 4 - getSurroundingPoints( point.regionIdentifier, point.x, point.y ).length;
+		point.perimeters = 4 - getSurroundingPoints( point.regionIdentifier, point.x, point.y ).length;
 	});
 });
 
 console.log(
 	regionIndexes.reduce( ( total, region ) => {
-		const perimeterTotal = Array.from( region ).reduce( ( regionPerimeterTotal, point ) => regionPerimeterTotal + point.regionPerimeterTotal, 0 );
+		const perimeterTotal = Array.from( region ).reduce( ( perimeters, point ) => perimeters + point.perimeters, 0 );
 		return total + ( region.size * perimeterTotal );
 	}, 0 )
 );

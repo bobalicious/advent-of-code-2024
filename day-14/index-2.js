@@ -102,7 +102,7 @@ let finish = false;
 let seconds = 0;
 
 const LINE_LIMIT = 36;
-const MORE_THAN = 6431;
+const MORE_THAN = 0;
 
 while( ! finish || seconds <= MORE_THAN ) {
 	resetMap();

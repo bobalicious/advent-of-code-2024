@@ -2,6 +2,7 @@ console.time( 'initialisation' );
 
 const files = {
 	tiny: 'tiny-input.txt',
+	tiny2: 'tiny2-input.txt',
 	test: 'test-input.txt',
 	full: 'input.txt'
 }
@@ -18,6 +19,8 @@ const map = [];
 const none = '.';
 const wall = '#';
 const box = 'O';
+const boxLeft = '[';
+const boxRight = ']';
 const robot = '@';
 
 const displacements = {
@@ -35,10 +38,15 @@ mapInput
 		const rowArray = row.split( '' );
 		rowArray.forEach( ( cell, x ) => {
 			if ( cell === robot ) {
-				robotLocation = { x, y };
+				robotLocation = { x: x*2, y };
 			}
-			map[ x ] = map[ x ] || [];
-			map[ x ][ y ] = cell;
+			const x1 = x*2;
+			const x2 = x1 + 1;
+			map[ x1 ] = map[ x1 ] || [];
+			map[ x2 ] = map[ x2 ] || [];
+
+			map[ x1 ][ y ] = cell == box ? boxLeft : cell;
+			map[ x2 ][ y ] = cell == box ? boxRight : cell == robot ? none : cell;
 		});
 		return rowArray;
 	});
@@ -53,12 +61,21 @@ const moveEntity = ( location, displacement ) => {
 }
 
 const moveEntities = ( locations, displacement ) => {
-	console.log( 'move...', locations, 'by', displacement );
 	locations.forEach( location => moveEntity( location, displacement ) );
 }
 
 const entityAt = location => {
 	return map[ location.x ][ location.y ];
+}
+
+const deduplicateThings = things => {
+	const deduped = [];
+	things.forEach( thisThing => {
+		if ( ! deduped.some( thisDedupedThing => thisDedupedThing.x === thisThing.x && thisDedupedThing.y === thisThing.y ) ) {
+			deduped.push( thisThing );
+		}
+	});
+	return deduped;
 }
 
 const canMove = ( location, displacement ) => {
@@ -67,18 +84,52 @@ const canMove = ( location, displacement ) => {
 	const entityAtNewLocation = entityAt( newLocation );
 
 	if ( entityAtNewLocation === wall ) {
-		console.log( 'canMove?  No - wall' );
 		return false;
 	}
 
-	if ( entityAtNewLocation === box ) {
+	if ( displacement.y === 0 ) {
 
-		const boxesThatNeedToMove = canMove( newLocation, displacement );
+		// horizontal movement follows the same rules as individual boxes
 
-		if ( boxesThatNeedToMove !== false ) {
-			return [ ...boxesThatNeedToMove, newLocation ];
+		if ( entityAtNewLocation === boxLeft || entityAtNewLocation === boxRight ) {
+			const boxesThatNeedToMove = canMove( newLocation, displacement );
+			if ( boxesThatNeedToMove !== false ) {
+				return [ ...boxesThatNeedToMove, newLocation ];
+			}
+			return false;
 		}
-		return false;
+	} else {
+		// vertical movement needs to check if the whole box can move
+
+		if ( entityAtNewLocation === boxLeft || entityAtNewLocation === boxRight ) {
+
+			let leftSideOfBoxLocation;
+			let rightSideOfBoxLocation;
+
+			if ( entityAtNewLocation === boxLeft ) {
+				leftSideOfBoxLocation = { x: newLocation.x, y: newLocation.y };
+				rightSideOfBoxLocation = { x: newLocation.x + 1, y: newLocation.y };
+			} else {
+				leftSideOfBoxLocation = { x: newLocation.x - 1, y: newLocation.y };
+				rightSideOfBoxLocation = { x: newLocation.x, y: newLocation.y };
+			}
+
+			const boxesThatNeedToMoveForLeft = canMove( leftSideOfBoxLocation, displacement );
+			const boxesThatNeedToMoveForRight = canMove( rightSideOfBoxLocation, displacement );
+
+			if ( boxesThatNeedToMoveForLeft !== false && boxesThatNeedToMoveForRight !== false ) {
+				const thingsToMove = [];
+				if ( boxesThatNeedToMoveForLeft.length ) {
+					thingsToMove.push( ...boxesThatNeedToMoveForLeft );
+				}
+				if ( boxesThatNeedToMoveForRight.length ) {
+					thingsToMove.push( ...boxesThatNeedToMoveForRight );
+				}
+				thingsToMove.push( leftSideOfBoxLocation, rightSideOfBoxLocation );
+				return deduplicateThings( thingsToMove );
+			}
+			return false;
+		}
 	}
 
 	return [];
@@ -100,7 +151,7 @@ const allBoxLocations = () => {
 	const boxLocations = [];
 	map.forEach( ( column, x ) => {
 		column.forEach( ( cell, y ) => {
-			if ( cell === box ) {
+			if ( cell === boxLeft ) {
 				boxLocations.push( { x, y } );
 			}
 		});
@@ -124,7 +175,6 @@ console.time( 'processing' );
 
 movements
 	.forEach( movement => {
-		console.log( renderMap() );
 		robotLocation = moveRobot( robotLocation, displacements[ movement ] );
 	} );
 

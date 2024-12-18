@@ -43,6 +43,14 @@ const possibleMoves = [
 	{ x: 1, y: 0 }
 ];
 
+const clearCheapestCosts = () => {
+	cheapestCosts.forEach( ( col, xIndex ) => {
+		col.forEach( ( cell, yIndex ) => {
+			cheapestCosts[ xIndex ][ yIndex ] = MAX_COST;
+		});
+	});
+}
+
 const cheapestEndCost = () => {
 	const cost = cheapestCosts[ startLocation.x ]?.[ startLocation.y ];
 	return cost || 999999999999999;
@@ -120,20 +128,35 @@ const workOutCheapestCostsFrom = ( location, currentCost ) => {
 	return nextToCheck;
 };
 
+const solveMaze = () => {
+	clearCheapestCosts();
+
+	const movesToCheck = [
+		{ location: targetLocation, currentCost: 0 },
+	];
+
+	while ( movesToCheck.length ) {
+		const next = movesToCheck.shift();
+		movesToCheck.push( ...workOutCheapestCostsFrom( next.location, next.currentCost ) );
+	}
+	return cheapestEndCost();
+}
+
 console.timeEnd( 'initialisation' );
 console.time( 'processing' );
 
-const movesToCheck = [
-	{ location: targetLocation, currentCost: 0 },
-];
+let currentByte = bytesToProcess;
+while ( currentByte < byteDrops.length ) {
+	currentByte++;
+	const byte = byteDrops[ currentByte ];
+	map[ byte.x ][ byte.y ] = wall;
 
-while ( movesToCheck.length ) {
-	const next = movesToCheck.shift();
-	movesToCheck.push( ...workOutCheapestCostsFrom( next.location, next.currentCost ) );
+	const solveCost = solveMaze();
+	console.log( currentByte, solveMaze() );
+	if ( solveCost === MAX_COST ) {
+		break;
+	}
 }
+console.log( byteDrops[ currentByte ] );
 
-renderCosts();
-const total = cheapestEndCost();
-
-console.log( total );
 console.timeEnd( 'processing' );

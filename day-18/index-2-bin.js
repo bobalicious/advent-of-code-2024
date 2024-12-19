@@ -76,7 +76,7 @@ const buildMap = numberOfBytes => {
 
 const cheapestEndCost = () => {
 	const cost = cheapestCosts[ startLocation.x ]?.[ startLocation.y ];
-	return cost || 999999999999999;
+	return cost || MAX_COST;
 }
 
 const entityAt = location => {
@@ -115,7 +115,6 @@ const workOutCheapestCostsFrom = ( location, currentCost ) => {
 
 	const nextToCheck = [];
 
-	// go in each direction
 	possibleMoves.forEach( move => {
 		const newLocation = moveLocation( location, move );
 		if ( canMoveTo( newLocation ) ) {
